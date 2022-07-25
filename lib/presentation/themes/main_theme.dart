@@ -75,7 +75,7 @@ class MainTheme implements AppTheme {
   TextStyle get textMedium => TextStyle(
       fontFamily: 'SfUIDisplay',
       fontSize: 18,
-      fontWeight: FontWeight.w400,
+      fontWeight: FontWeight.w500,
       color: _colorDarkGrey
   );
 

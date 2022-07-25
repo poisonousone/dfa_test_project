@@ -1,3 +1,4 @@
+import 'package:dfa_test_project/presentation/screens/placeholder_screen/placeholder_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_translate/flutter_translate.dart';
@@ -27,6 +28,18 @@ class Router {
                 child: HomeScreen()
             ),
             settings: routeSettings
+        );
+
+      case Routes.articleScreen:
+        return MaterialPageRoute(
+          builder: (context) => ArticleScreen(),
+          settings: routeSettings,
+        );
+
+      case Routes.placeholderScreen:
+        return MaterialPageRoute(
+            builder: (context) => PlaceholderScreen(),
+            settings: routeSettings,
         );
 
       default:

@@ -1,7 +1,10 @@
+import 'dart:ui';
+
 import 'package:dfa_test_project/data/api/api.dart';
 import 'package:dfa_test_project/dependency_injection/getter.dart';
 import 'package:dfa_test_project/domain/models/models.dart';
 import 'package:dfa_test_project/presentation/blocs/blocs.dart';
+import 'package:dfa_test_project/presentation/controls/controls.dart';
 import 'package:dfa_test_project/presentation/themes/theme_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,102 +28,57 @@ class HomeScreenState extends State<HomeScreen> {
           MainScreenState>(
       listener: (context, state) {},
       child: Stack(children: [
-        Image.asset(
-          'assets/images/background',
+        Container(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
-          fit: BoxFit.cover,
+          child: Image.asset(
+            'assets/images/background.png',
+            fit: BoxFit.cover,
+          ),
         ),
         Scaffold(
-          bottomNavigationBar: BottomNavigationBar(
-            items: [
-              BottomNavigationBarItem(
-                  icon: SvgPicture.asset('main.svg'),
-                  activeIcon: Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                                color: ThemeHelper.getTheme().colorYellow,
-                                spreadRadius: 2)
-                          ]),
-                      child: SvgPicture.asset('assets/images/main.svg'))),
-              BottomNavigationBarItem(
-                  icon: SvgPicture.asset('assets/images/companies.svg'),
-                  activeIcon: Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                                color: ThemeHelper.getTheme().colorYellow,
-                                spreadRadius: 2)
-                          ]),
-                      child: SvgPicture.asset('assets/images/companies.svg'))),
-              // BottomNavigationBarItem(
-              //     icon: SvgPicture.asset('assets/images/.svg'),
-              //     activeIcon: Container(
-              //       decoration: BoxDecoration(
-              //         shape: BoxShape.circle,
-              //         boxShadow: [
-              //           BoxShadow(
-              //             color: ThemeHelper.getTheme().colorYellow,
-              //             spreadRadius: 2
-              //           )
-              //         ]
-              //       ),
-              //       child: SvgPicture.asset('assets/images/main.svg')
-              //     )
-              // ),
-              BottomNavigationBarItem(
-                  icon: SvgPicture.asset('assets/images/calendar.svg'),
-                  activeIcon: Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                                color: ThemeHelper.getTheme().colorYellow,
-                                spreadRadius: 2)
-                          ]),
-                      child: SvgPicture.asset('assets/images/calendar.svg'))),
-              BottomNavigationBarItem(
-                  icon: SvgPicture.asset('profile.svg'),
-                  activeIcon: Container(
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                                color: ThemeHelper.getTheme().colorYellow,
-                                spreadRadius: 2)
-                          ]),
-                      child: SvgPicture.asset('assets/images/profile.svg'))),
-            ],
-            backgroundColor: ThemeHelper.getTheme().color1White,
-          ),
+          backgroundColor: Colors.transparent,
+          bottomNavigationBar: CustomBottomBar(initialIndex: 0,),
           body: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(15.0),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const SizedBox(
-                      height: 64,
+                      height: 50,
                     ),
                     SizedBox(
                       height: 152,
-                      child: SvgPicture.asset('assets/images/accountant.png'),
+                      child: Image.asset('assets/images/accountant.png'),
                     ),
-                    Text('Ваш бухгалтер', //todo i18n
-                        style: ThemeHelper.getTheme().text1Regular),
-                    Text('Наталья Анашкина', //todo i18n
-                        style: ThemeHelper.getTheme().text1Semibold),
-                    Text(
-                      'Уведомления', //todo i18n
-                      style: ThemeHelper.getTheme().textMedium,
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Text('Ваш бухгалтер', //todo i18n
+                          style: ThemeHelper.getTheme().text1Regular),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Text('Наталья Анашкина', //todo i18n
+                          style: ThemeHelper.getTheme().text1Semibold),
+                    ),
+                    SizedBox(height: 5),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Уведомления', //todo i18n
+                        style: ThemeHelper.getTheme().textMedium,
+                      ),
+                    ),
+                    SizedBox(height: 3,),
                     _buildNotifications(),
-                    Text(
-                      'Новости', //todo i18n
-                      style: ThemeHelper.getTheme().textMedium,
+                    SizedBox(height: 10),
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'Новости', //todo i18n
+                        style: ThemeHelper.getTheme().textMedium,
+                      ),
                     ),
                     _buildNewsList()
                   ]),
@@ -132,75 +90,54 @@ class HomeScreenState extends State<HomeScreen> {
   _buildNotifications() {
     List<NotificationItem> notifications = [
       NotificationItem(
-          imageAsset: 'assets/images/',
+          imageAsset: 'assets/images/notification.png',
           notificationText: 'Добавьте вашу первую компанию')
     ];
 
     return ListView.builder(
+      padding: EdgeInsets.symmetric(vertical: 10),
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        physics: NeverScrollableScrollPhysics(),
         itemCount: notifications.length,
         itemBuilder: (BuildContext context, int index) => Container(
+              height: 86,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
+                  borderRadius: BorderRadius.circular(25),
                   boxShadow: [
                     BoxShadow(
                         color: ThemeHelper.getTheme().colorYellow,
-                        blurRadius: 5)
+                        blurRadius: 3)
                   ],
                   color: ThemeHelper.getTheme().color2White),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SvgPicture.asset(notifications[index].imageAsset),
-                  Center(
+                  Image.asset(notifications[index].imageAsset, fit: BoxFit.contain),
+                  Flexible(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 15),
                       child: Text(notifications[index].notificationText,
-                          style: ThemeHelper.getTheme().textMedium))
+                        style: ThemeHelper.getTheme().textMedium.copyWith(fontSize: 14.5),
+                        textAlign: TextAlign.center,
+                      ),
+                  )
+                  )
                 ],
               ),
             ));
   }
 
   _buildNewsList() => FutureBuilder(
-      future: _newsClient.getNewsList('url'),
+      future: _newsClient.getNewsList(url),
       builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
         if (snapshot.hasData) {
           return ListView.builder(
+              padding: EdgeInsets.zero,
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               itemCount: snapshot.data!.length,
-              itemBuilder: (BuildContext context, int index) => Container(
-                  alignment: Alignment.bottomLeft,
-                  decoration: BoxDecoration(
-                    image: const DecorationImage(
-                        image: AssetImage('assets/images/news_background.png'),
-                        fit: BoxFit.cover),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 5,
-                      horizontal: 10,
-                    ),
-                    child: Column(
-                      children: [
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: Text(snapshot.data![index].title,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                                style: ThemeHelper.getTheme().text2Semibold),
-                          ),
-                        ),
-                        Flexible(
-                          child: Padding(
-                            padding: const EdgeInsets.all(2),
-                            child: Text(snapshot.data![index].body,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
-                                style: ThemeHelper.getTheme().text2Semibold),
-                          ),
-                        )
-                      ],
-                    ),
-                  )));
+              itemBuilder: (BuildContext context, int index) => NewsItem.fromJson(snapshot.data![index]));
         } else {
           return const Center(child: CircularProgressIndicator());
         }
